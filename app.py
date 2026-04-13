@@ -1,32 +1,48 @@
 from fastapi import FastAPI, UploadFile, File
 import lightgbm as lgb
-import thrember
 import numpy as np
-import uvicorn
+import os
+
+# ✅ FIXED import (based on your folder structure)
+from thrember.src.thrember.features import PEFeatureExtractor
 
 app = FastAPI(title="Malware Detection API - Phase I")
 
-# Load your custom model and extractor globally for speed
+# ✅ Load model and extractor safely
 MODEL_PATH = "best.model"
-model = lgb.Booster(model_file=MODEL_PATH)
-extractor = thrember.PEFeatureExtractor()
+
+try:
+    print("🚀 Starting app...")
+    print("📦 Loading model...")
+    model = lgb.Booster(model_file=MODEL_PATH)
+    print("✅ Model loaded")
+
+    print("🔧 Initializing extractor...")
+    extractor = PEFeatureExtractor()
+    print("✅ Extractor ready")
+
+except Exception as e:
+    print("❌ Startup failed:", e)
+    raise e
+
+
 @app.get("/")
 def home():
-    return {"message": "Malware Detection API running "}
+    return {"message": "Malware Detection API running 🚀"}
+
 
 @app.post("/scan")
 async def scan_file(file: UploadFile = File(...)):
     try:
-        # Read the uploaded file bytes
         contents = await file.read()
-        
-        # Extract features (2568-dimensional)
-        features = np.array(extractor.feature_vector(contents), dtype=np.float32)
-        
-        # Predict
+
+        features = np.array(
+            extractor.feature_vector(contents),
+            dtype=np.float32
+        )
+
         probability = float(model.predict([features])[0])
-        
-        # Determine Verdict
+
         if probability >= 0.70:
             verdict = "MALICIOUS"
         elif probability <= 0.25:
@@ -40,9 +56,16 @@ async def scan_file(file: UploadFile = File(...)):
             "verdict": verdict,
             "status": "success"
         }
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
 
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": str(e)
+        }
+
+
+# ✅ Local run only (Render ignores this)
 if __name__ == "__main__":
-    # This runs the server on your local IP
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    port = int(os.environ.get("PORT", 8000))
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=port)
