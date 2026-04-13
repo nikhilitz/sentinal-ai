@@ -27,4 +27,4 @@ dist/
 .ipynb_checkpoints/
 
 # Large files (optional - see below)
-# my_custom_win32_malware.model
+# best.model
