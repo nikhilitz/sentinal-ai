@@ -4,8 +4,7 @@ import numpy as np
 import os
 
 # ✅ FIXED import (based on your folder structure)
-from thrember.src.thrember.features import PEFeatureExtractor
-
+from thrember.features import PEFeatureExtractor
 app = FastAPI(title="Malware Detection API - Phase I")
 
 # ✅ Load model and extractor safely
