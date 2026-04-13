@@ -3,3 +3,4 @@ uvicorn
 lightgbm
 numpy
 python-multipart
+pefile
