@@ -1,31 +1,13 @@
 # Python
 __pycache__/
-*.py[cod]
-*.pyo
+*.pyc
 
-# Virtual environment
+# Virtual env
+nenv/
 venv/
-.env/
-.env.*
-nevn/
 
-# Mac system files
+# OS
 .DS_Store
 
-# Logs
+# Misc
 *.log
-
-# IDEs
-.vscode/
-.idea/
-
-# Build / dist
-build/
-dist/
-*.egg-info/
-
-# Jupyter (if you ever use)
-.ipynb_checkpoints/
-
-# Large files (optional - see below)
-# best.model
