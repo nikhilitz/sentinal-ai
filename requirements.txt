@@ -5,3 +5,5 @@ numpy
 python-multipart
 pefile
 scikit-learn
+joblib
+signify
