@@ -3,36 +3,49 @@ import lightgbm as lgb
 import numpy as np
 import os
 
-# ✅ FIXED import (based on your folder structure)
 from thrember.features import PEFeatureExtractor
+
 app = FastAPI(title="Malware Detection API - Phase I")
 
-# ✅ Load model and extractor safely
-MODEL_PATH = "best.model"
+# Global variables
+model = None
+extractor = None
 
-try:
-    print("🚀 Starting app...")
-    print("📦 Loading model...")
-    model = lgb.Booster(model_file=MODEL_PATH)
-    print("✅ Model loaded")
+# ✅ Safe startup loading
+@app.on_event("startup")
+def load_model():
+    global model, extractor
+    try:
+        print("🚀 Starting app...")
 
-    print("🔧 Initializing extractor...")
-    extractor = PEFeatureExtractor()
-    print("✅ Extractor ready")
+        print("📦 Loading model...")
+        model = lgb.Booster(model_file="best.model")
+        print("✅ Model loaded")
 
-except Exception as e:
-    print("❌ Startup failed:", e)
-    raise e
+        print("🔧 Initializing extractor...")
+        extractor = PEFeatureExtractor()
+        print("✅ Extractor ready")
+
+    except Exception as e:
+        print("❌ Startup failed:", e)
 
 
+# ✅ Health check route
 @app.get("/")
 def home():
     return {"message": "Malware Detection API running 🚀"}
 
 
+# ✅ Scan endpoint
 @app.post("/scan")
 async def scan_file(file: UploadFile = File(...)):
     try:
+        if model is None or extractor is None:
+            return {
+                "status": "error",
+                "message": "Model not loaded properly"
+            }
+
         contents = await file.read()
 
         features = np.array(
@@ -63,8 +76,8 @@ async def scan_file(file: UploadFile = File(...)):
         }
 
 
-# ✅ Local run only (Render ignores this)
+# ✅ Local run (ignored in deployment)
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8000))
     import uvicorn
+    port = int(os.environ.get("PORT", 8080))
     uvicorn.run(app, host="0.0.0.0", port=port)
