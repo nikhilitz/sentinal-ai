@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+venv/
+.env/
+.env.*
+
+# Mac system files
+.DS_Store
+
+# Logs
+*.log
+
+# IDEs
+.vscode/
+.idea/
+
+# Build / dist
+build/
+dist/
+*.egg-info/
+
+# Jupyter (if you ever use)
+.ipynb_checkpoints/
+
+# Large files (optional - see below)
+# my_custom_win32_malware.model
