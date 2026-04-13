@@ -6,4 +6,7 @@ python-multipart
 pefile
 scikit-learn
 joblib
-signify
+signify==0.7.1
+polars
+tqdm==4.67.3
+huggingface_hub==1.7.2
